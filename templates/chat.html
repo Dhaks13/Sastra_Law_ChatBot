@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <title>
+            Ai For Law
+        </title>
+        <link rel="icon" href="{{url_for('static', filename='Timmerman & lawyers.png')}}" type="image/x-icon">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .drop-container {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  height: 25px;
+  width: 25%;
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px dashed #555;
+  color: #444;
+  cursor: pointer;
+  transition: background .2s ease-in-out, border .2s ease-in-out;
+}
+
+.drop-container:hover {
+  background: #eee;
+  border-color: #111;
+}
+
+.drop-container:hover .drop-title {
+  color: #222;
+}
+
+.drop-title {
+  color: #444;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+  transition: color .2s ease-in-out;
+}
+    </style>
+    </head>
+    <body style="background-color: #0A62A7; overflow: hidden;">
+        <div style="width: 100%; height: 100%; position: absolute; background: white; overflow: hidden;">
+
+            <div style="width: 100%; height: 20%; left: 0%; top: 0%; position: absolute; background: #2D9FF1;  box-shadow: 4px 4px 4px; filter: blur(0.1px)">
+                    
+                <a href="https://sastra.edu/" style="width: 44%; height: 99%; left:55%; top: 0%; position: absolute"><img style="width: 100%; height: 99%; left:0%; top: 0%; position: absolute" src="{{url_for('static', filename='SASTRA.jpg')}} "></a>
+                <img style="width: 12%; height: 80%; left: 6%; top: 10%; position: absolute" src="{{url_for('static', filename='Timmerman & lawyers.png')}}">
+                <button style="width: 4%; height: 35%; left: 1%; top: 30%; position: absolute; border-radius: 9999px; border: 1px #2D9FF1 solid" onclick="openNav()"> <img style="width: 100%; height: 100%; left: 0px; top: 0px; position: absolute; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) inset; border-radius: 9999px; border: 1px #2D9FF1 solid" src="{{url_for('static', filename='pngtree-filter-search-option-icon-png-image_4837243.png')}}">
+                </button>
+                <div style="width: 100%; height: 100%; left: 20%; top: 35%; position: absolute; color: white; font-size: 300%; font-family: Comic Neue; font-weight: 400; word-wrap: break-word">AI FOR LAW</div>
+            </div>
+            <form>
+            <div style="width: 99%; height: 70%; left: 0%; position:absolute; top: 21%; overflow-y: scroll;">
+                <div id="chatbox">
+                    <br>
+                   <b> <div style="left: 5%; position: absolute; color: #2D9FF1; font-size: 110%; font-family: Combo; font-weight: 400; letter-spacing: 7px; word-wrap: break-word">AI:</div>
+                    <div style="left: 5%; position: absolute; color: black; font-size: 130%; font-family: Combo; font-weight: 400; letter-spacing: 7px; word-wrap: break-word"><p>Hi! I am your Law AI. I predict the law results related to Domain issues.How can I help you today?</p></div><br><br> <br>           
+                   </b></div>
+
+                </div>
+            </div>
+
+            <div style="width: 100%; height: 10%; left: 0%; top: 90%; position: absolute; background: #2D9FF1">
+            <label for="text">
+                <input oninput="disableInput(this)" minlength="5" id="text" type="text" name="msg" placeholder="Type your qurey or upload your case file here..." style="font-size: 100%; width: 98%; height: 90%; left: 0.5%; top: 1%; position: absolute; background: white; box-shadow: 4px 4px 4px; border-radius: 20px; border: 1px black solid; filter: blur(0.1px)">
+            </label>
+                <label for="files" class="drop-container" style=" left: 65%; top: 0%; position: absolute; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) inset; border-radius: 30px; border: 1px #2D9FF1 solid">
+                    <span class="drop-title">Drop files here</span>
+                    or
+                <input type="file" id="files" accept=".pdf,.txt" oninput="disableInput(this)">
+            </label>
+
+                <button style="width: 3%; height: 60%; left: 95%; top: 20%; position: absolute; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) inset; border-radius: 9999px; border: 1px #2D9FF1 solid"  type="submit" id="send">
+                <img style="width: 100%; height: 100%; left: 0%; top: 0%; position: absolute; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) inset; border-radius: 9999px; border: 1px #2D9FF1 solid" src="{{url_for('static', filename='send.jpg')}}" /></button>
+            </div>
+            </form>
+        </div>
+
+        <div id="mySidenav" class="Sidenav" style="height: 100%; width: 0%;left:0%; top: 0%; position: absolute; overflow:hidden">
+            <div style="width: 100%; height: 100%; position: absolute; background: #2D9FF1; border-radius: 2px; overflow-x: hidden; border: 1px rgba(255, 255, 255, 0.10) solid">
+                <img onclick="closeNav()" style="width: 15%; height: 10%; left: 5%; top: 5%; position: absolute; border-radius: 9999px; border: 1px #2D9FF1 solid" src="{{url_for('static', filename='pngtree-filter-search-option-icon-png-image_4837243.png')}}">
+                <a href="https://sastra.edu/"><img style="width: 100%; height: 20%; left: 0%; top: 80%; position: absolute" src="{{url_for('static', filename='SASTRA.jpg')}}"></a>
+                  <img style="width: 50%; height: 25%; left: 30%; top: 5%; position: absolute" src="{{url_for('static', filename='Timmerman & lawyers.png')}}">
+                <div style="width: 99.5%; height: 7%; left: 0%; top: 47%; position: absolute">
+                    <div style="width: 99.5%; height: 100%; left: 0%; top: 0%; position: absolute; background: #2D9FF1; border: 3px white solid">
+                    <div style="width: 50%; height: 20%; left: 40%; top: 25%; position: absolute; color: white; font-size: 200%; font-family: Comic Neue; font-weight: 400; word-wrap: break-word">Chat</div></div>
+            
+                </div>
+                <a href="{{ url_for('home') }}">
+                <div style="width: 100%; height: 7%; left: 0%; top: 35%; position: absolute; background: white; border: 10px white solid"></div>
+                <div style="width: 50%; height: 7%; left: 40%; top: 37%; position: absolute; color: #2D9FF1; font-size: 200%; font-family: Comic Neue; font-weight: 400; word-wrap: break-word">Home</div>
+            </a>
+        <!--
+            <a href="{{ url_for('about') }}">
+                <div style="width: 100%; height: 7%; left: 0%; top: 57%; position: absolute; background: white; border: 10px white solid"></div>
+               <div style="width: 50%; height: 7%; left: 38%; top: 59%; position: absolute;  color: #2D9FF1; font-size: 200%; font-family: Comic Neue; font-weight: 400; word-wrap: break-word">Contact</div>
+            </a>-->
+        </div>
+        </div>
+        
+        <script>
+            
+        function disableInput(input) {
+            const otherInput = input.id === "text" ? document.getElementById("files") : document.getElementById("text");
+            if (input.value === "") {
+                otherInput.disabled = false;
+            } else {
+                otherInput.disabled = true; 
+            }
+        }
+
+            function openNav() {
+              document.getElementById("mySidenav").style.width = "30%";
+            }
+            
+            function closeNav() {
+              document.getElementById("mySidenav").style.width = "0%";
+            }
+            var top=10;
+            $(document).ready(function() {
+        $("form").on("submit", function(event) {
+            document.querySelector('#send').disabled = true;
+            var rawText = $("#text").val();
+            var rawfile = $("#files").val();
+            if (rawText!='') {
+                var userHtml = '<b><br><br><div style="left: 5%; position: absolute; color: #f12d2d; font-size: 110%; font-family: Combo; font-weight: 400; letter-spacing: 7px; word-wrap: break-word">User:</div><div style="left: 5%; position: absolute; color: black; font-size: 130%; font-family: Combo; font-weight: 400; letter-spacing: 7px; word-wrap: break-word"><p>' + rawText + "</p></div> </b></div><br><br>";
+            top+=10;
+            $("#text").val("");
+            $("#chatbox").append(userHtml);
+            document.getElementById("files").disabled=false;
+            document.getElementById("text").disabled=false;
+            } 
+            else {
+                var name = document.getElementById('files').files.item(0).name; 
+                var userHtml = '<b><br><br><div style="left: 5%; position: absolute; color: #f12d2d; font-size: 110%; font-family: Combo; font-weight: 400; letter-spacing: 7px; word-wrap: break-word">User:</div><div style="left: 5%; position: absolute; color: black; font-size: 130%; font-family: Combo; font-weight: 400; letter-spacing: 7px; word-wrap: break-word"><p>' + "loaded file: "+ name + "</p></div> </b></div><br><br>";
+            top+=10;
+            $("#files").val("");
+            $("#chatbox").append(userHtml);
+            document.getElementById("files").disabled=false;
+            document.getElementById("text").disabled=false;
+            }
+            $.ajax({
+                data: {
+                    msg: (rawText,rawfile),
+                },
+                type: "POST",
+                url: "/get",
+            }).done(function(data) {
+                var botHtml = '<b> <br><div style="left: 5%; position: absolute; color: #2D9FF1; font-size: 110%; font-family: Combo; font-weight: 400; letter-spacing: 7px; word-wrap: break-word">AI:</div><div style="left: 5%; position: absolute; color: black; font-size: 130%; font-family: Combo; font-weight: 400; letter-spacing: 7px; word-wrap: break-word"><p>' + data + "</p></div> </b></div><br><br>";
+                top+=10;
+                $("#chatbox").append($.parseHTML(botHtml));
+            });
+            document.querySelector('#send').disabled = false;
+            event.preventDefault();
+        });
+    });
+            </script>
+            
+        </body>
+</html>
