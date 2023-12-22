@@ -1,71 +1,104 @@
-from flask import Flask, request, render_template
-from flask_mysqldb import MySQL
-"""
+from flask import Flask, request, render_template, jsonify
 from pathlib import Path
-from typing import List, Tuple
-from langchain import PromptTemplate, LLMChain
-from langchain.document_loaders import TextLoader
-from langchain.embeddings import LlamaCppEmbeddings
-from langchain.llms import GPT4All
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores.faiss import FAISS
-from pydantic import BaseModel, Field
+from dotenv import load_dotenv
+import PyPDF2  # PyMuPDF
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.embeddings import OpenAIEmbeddings, HuggingFaceInstructEmbeddings
+from langchain.vectorstores import FAISS
+from langchain.chat_models import ChatOpenAI
+from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
-# Constants
-local_path = "./models/gpt4all-converted.bin"
-model_path = "./models/ggml-model-q4_0.bin"
-text_path = "./docs/file0.txt"
-index_path = "./indexes"
+from langchain.llms import HuggingFaceHub
+from transformers import T5Tokenizer, T5ForConditionalGeneration
+import torch
 
-# Functions
-def initialize_embeddings() -> LlamaCppEmbeddings:
-    return LlamaCppEmbeddings(model_path=model_path)
+model_name = "google/t5-large-ssm-nq"
+#model_name = "google/flan-t5-xxl"
+tokenizer = T5Tokenizer.from_pretrained(model_name)
+model = T5ForConditionalGeneration.from_pretrained(model_name)
+file_text=''
 
-def load_documents() -> List:
-    loader = TextLoader(text_path)
-    return loader.load()
 
-def split_chunks(sources: List) -> List:
-    chunks = []
-    splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=32)
-    for chunk in splitter.split_documents(sources):
-        chunks.append(chunk)
-    return chunks
+def extract_text_from_pdf(pdf_file):
+    text = ''
+    pdf_reader = PyPDF2.PdfReader(pdf_file)
 
-def generate_index(chunks: List, embeddings: LlamaCppEmbeddings) -> FAISS:
-    texts = [doc.page_content for doc in chunks]
-    metadatas = [doc.metadata for doc in chunks]
-    return FAISS.from_texts(texts, embeddings, metadatas=metadatas)
+    for page_num in range(len(pdf_reader.pages)):
+        text += pdf_reader.pages[page_num].extract_text()
 
-# Main execution
-llm = GPT4All(model=local_path, max_tokens =2048, verbose=True)
+    return text
 
-embeddings = initialize_embeddings()
-sources = load_documents()
-chunks = split_chunks(sources)
-vectorstore = generate_index(chunks, embeddings)
-vectorstore.save_local("full_sotu_index")
+def handle_file_upload():
+    try:
+        pdf_file = request.files['pdffiles']
 
-index = FAISS.load_local(index_path, embeddings)
+        # Check if the file is not None
+        if pdf_file is None:
+            return jsonify({'error': 'No file uploaded.'}), 400
 
-qa = ConversationalRetrievalChain.from_llm(llm, index.as_retriever(), max_tokens_limit=400)
-chat_history=[]
+        # Check file content type
+        if pdf_file.content_type != 'application/pdf':
+            return jsonify({'error': 'Invalid file format. Please upload a PDF file.'}), 400
 
-"""
+        # Extract text from PDF
+        try:
+            file_text = extract_text_from_pdf(pdf_file)
+            return jsonify({'result': "File Upload Success!"})
+        except Exception as e:
+            print("Error extracting text:", e)
+            return jsonify({'error': str(e)}), 400
+
+    except Exception as e:
+        # Print full traceback for debugging
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': 'An unexpected error occurred.'}), 500
+
+
+# Function to process user queries and get model responses
+def get_model_response(query, pdf_text):
+    input_text = "question: {} context: {}".format(query, pdf_text)
+    inputs = tokenizer.encode(input_text, return_tensors="pt", max_length=512, truncation=True)
+
+    # Generate model response
+    with torch.no_grad():
+        model_output = model.generate(inputs)
+
+    # Decode the model's response
+    model_response = tokenizer.decode(model_output[0], skip_special_tokens=True)
+    return model_response
+
+def generate_message():
+    try:
+        # Handle text input
+        text = request.form["msg"]
+        model_response = get_model_response(text, file_text)
+        
+        # Convert the model response to a string
+        result = str(model_response)
+        print(result)
+
+        return jsonify({'result': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+
 app  = Flask(__name__)
 @app.route('/')
 def home():
     return  render_template("index.html")
 
 
-@app.route("/get", methods=["GET","POST"])
+@app.route('/get', methods=['POST', 'POST1'])
 def chatbot_response():
-    return "Not connected to chatbot"
-    
-"""
-    msg = request.form["msg"]
-    response = qa({"question": msg, "chat_history": chat_history})
-    return response['answer']"""
+    if request.method == 'POST':
+        return handle_file_upload()
+    elif request.method == 'POST1':
+        return generate_message()
+    else:
+        return "Bot not found"
+
+
 
 @app.route('/chat')
 def chat():
