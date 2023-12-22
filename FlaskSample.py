@@ -73,12 +73,7 @@ def generate_message():
         # Handle text input
         text = request.form["msg"]
         model_response = get_model_response(text, file_text)
-        
-        # Convert the model response to a string
-        result = str(model_response)
-        print(result)
-
-        return jsonify({'result': result})
+        return jsonify({'result': model_response })
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
@@ -96,7 +91,7 @@ def chatbot_response():
     elif request.method == 'POST1':
         return generate_message()
     else:
-        return "Bot not found"
+        return jsonify({'result': "Bot not found"})
 
 
 

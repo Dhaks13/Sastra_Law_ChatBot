@@ -223,7 +223,7 @@
             type: "POST1",
             url: "/get",
         }).done(function(data) {
-            var botHtml = '<b><div class="message bot-message"><div class="ai-container"><div class="ai-text">AI:</div></div><br>' + data + '</div></b>';
+            var botHtml = '<b><div class="message bot-message"><div class="ai-container"><div class="ai-text">AI:</div></div><br>' + data.result + '</div></b>';
             $("#chatbox").append($.parseHTML(botHtml));
             document.querySelector('#send').disabled = false;
         });
